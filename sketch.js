@@ -174,7 +174,7 @@ class Rect {
 
         // Apply rotation based on noise for a dynamic effect
         let angle = noise(this.x * 0.01 + frameCount * 0.01, this.y * 0.01, frameCount * 0.01) * 360;
-        if (this.part == "main") {
+        if (this.part == 'main') {
             rotate(random(360)); // Apply random rotation for main rectangles
         } else {
             rotate(angle); // Apply noise-based rotation for other parts
