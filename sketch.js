@@ -1,3 +1,6 @@
+// Final version
+// ChatGPT helps review and translate comments.
+
 let sky, sea, reflection, main;
 let size = 10; // Size of rectangle (You can change rectangle's size here)
 let skyRects = []; // Store rectangles for the sky part
