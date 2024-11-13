@@ -78,7 +78,7 @@ function rectInit() {
                     reflection.pixels[index + 1],
                     reflection.pixels[index + 2],
                     reflection.pixels[index + 3],
-                    "reflection"
+                    "sea"
                 ));
             }
 
@@ -171,7 +171,22 @@ class Rect {
         push(); // Save the current drawing settings
         noStroke(); // No border for the rectangle
         translate(this.x, this.y); // Move to the position of the rectangle
-        rotate(random(360));// Rotate the degrees of the rectangle
+
+        // Apply rotation based on noise for a dynamic effect
+        let angle = noise(this.x * 0.01 + frameCount * 0.01, this.y * 0.01, frameCount * 0.01) * 360;
+        if (this.part == "main") {
+            rotate(random(360)); // Apply random rotation for main rectangles
+        } else {
+            rotate(angle); // Apply noise-based rotation for other parts
+        }
+
+        // Apply scaling effect for sea part to create a wavy effect
+        // I got the code reference this website:
+        // https://p5js.org/reference/p5/scale/  
+        if (this.part == 'sea') {
+            scale(1 + noise(this.x * 0.01 + frameCount * 0.01, this.y * 0.01, frameCount * 0.01) * 2);
+        }
+
         // Set the fill color with the original pixel's RGBA values
         fill(this.r, this.g, this.b, this.a / 1); 
         rect(0, 0, size, size); // Draw the rectangle centered at (0, 0)
