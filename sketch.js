@@ -181,8 +181,6 @@ class Rect {
         }
 
         // Apply scaling effect for sea part to create a wavy effect
-        // I got the code reference this website:
-        // https://p5js.org/reference/p5/scale/  
         if (this.part == 'sea') {
             scale(1 + noise(this.x * 0.01 + frameCount * 0.01, this.y * 0.01, frameCount * 0.01) * 2);
         }
