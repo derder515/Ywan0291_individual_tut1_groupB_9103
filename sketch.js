@@ -131,9 +131,6 @@ function draw() {
 }
 
 // Rectangle class, used to store data for each rectangle and implement drawing and movement logic
-// We got the code reference this website:
-// https://editor.p5js.org/Jaekook/sketches/SywJ5wg57
-// https://p5js.org/reference/p5/class/
 class Rect {
     // Data for a class is a collection of variables
     constructor(x, y, r, g, b, a, part) {
