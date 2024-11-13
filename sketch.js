@@ -1,4 +1,3 @@
-
 let sky, sea, reflection, main;
 let size = 10; // Size of rectangle (You can change rectangle's size here)
 let skyRects = []; // Store rectangles for the sky part
@@ -31,21 +30,24 @@ function rectInit() {
     sea.resize(width, height);
     reflection.resize(width, height);
     main.resize(width, height);
-
+    
     // Load pixel data for each image
     sky.loadPixels();
     sea.loadPixels();
     reflection.loadPixels();
     main.loadPixels();
 
-    // Iterate over the entire canvas to create rectangles based on pixel data
-    for (let x = 0; x < width; x += size / 2) {
+    // Get the pixel indices of a specific RGB value of a image, and draw rectangles
+    // We got the code reference this website:
+    // https://editor.p5js.org/iscodd/sketches/7-_pQbU9G 
+    // https://stackoverflow.com/questions/24689403/index-a-pixel-using-one-loop-or-two-loops
+    for (let x = 0; x < width; x += size / 2 ) {
         for (let y = 0; y < height; y += size / 2) {
             let index = (x + y * width) * 4; // Calculate the index in the pixel array
 
             // Sky Rectangles
             if (sky.pixels[index + 3] > 0) { // Check if the alpha value is greater than 0
-                // This is to speed up the operation so that the program does not have to calculate the blank part of the image
+                // Speed up the operation so that the program does not have to calculate the blank part of the image
                 skyRects.push(new Rect(
                     x, y,
                     sky.pixels[index],
@@ -96,7 +98,6 @@ function rectInit() {
 }
 
 function draw() {
-    // background(255); // Set the background to white to avoid overlap
 
     // Draw all rectangles representing the sky part
     for (let i = 0; i < skyRects.length; i++) {
@@ -127,7 +128,11 @@ function draw() {
 }
 
 // Rectangle class, used to store data for each rectangle and implement drawing and movement logic
+// We got the code reference this website:
+// https://editor.p5js.org/Jaekook/sketches/SywJ5wg57
+// https://p5js.org/reference/p5/class/
 class Rect {
+    // Data for a class is a collection of variables
     constructor(x, y, r, g, b, a, part) {
         this.x = x; // x-coordinate of the rectangle
         this.y = y; // y-coordinate of the rectangle
@@ -135,16 +140,30 @@ class Rect {
         this.g = g; // Green value
         this.b = b; // Blue value
         this.a = a; // Alpha (transparency) value
-        this.part = part; // Part of the image the rectangle belongs to
-        this.noiseX = random(10);
+        this.part = part; // Part of the image the rectangle belongs to 
+        this.ox = x; // Original x-coordinate for reset purposes
+        this.oy = y; // Original y-coordinate for reset purposes
+        this.noiseX = random(10); // Random starting value for noise-based movement
+        this.time = random(320); // Time counter for controlling the movement duration
     }
 
     move() {
-        if (this.part === 'sky') {
-        this.x += map(noise(this.noiseX), 0, 1, -50, 50);
-        this.noiseX += 0.001;
-        if (this.x < 0) this.x = width;
-        if (this.x > width) this.x = 0;
+        if (this.part === 'sky') { // Only apply movement logic for sky rectangles
+            // I got the code reference this website:
+            // https://editor.p5js.org/BarneyCodes/sketches/2eES4fBEL
+            let angle = noise(this.x * 0.01, this.y * 0.01) * 360; // Use Perlin noise to determine movement angle
+            let vx = cos(angle) * 0.3; // Calculate velocity in x-direction based on angle
+            let vy = sin(angle) * 0.3; // Calculate velocity in y-direction based on angle
+            this.x += vx; // Update x-coordinate
+            this.y += vy; // Update y-coordinate
+
+            // If time reaches zero, reset to original position
+            if (this.time <= 0) {
+                this.x = this.ox;
+                this.y = this.oy;
+                this.time = 320; // Reset the timer
+            }
+            this.time -= 1; // Decrease time counter
         }
     }
 
@@ -153,8 +172,9 @@ class Rect {
         noStroke(); // No border for the rectangle
         translate(this.x, this.y); // Move to the position of the rectangle
         rotate(random(360));// Rotate the degrees of the rectangle
-        fill(this.r, this.g, this.b, this.a / 1); // Set the fill color and transparency
-        rect(0, 0, size, size); // Draw the rectangle
+        // Set the fill color with the original pixel's RGBA values
+        fill(this.r, this.g, this.b, this.a / 1); 
+        rect(0, 0, size, size); // Draw the rectangle centered at (0, 0)
         pop(); // Restore the previous drawing settings
     }
 }
